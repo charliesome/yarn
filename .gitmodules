@@ -1,0 +1,3 @@
+[submodule "vendor/libtoml"]
+	path = vendor/libtoml
+	url = git://github.com/ajwans/libtoml.git
