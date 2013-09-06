@@ -20,14 +20,13 @@ yarn: $(OBJS) $(LIBS) Makefile
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 vendor/vitapi/src/libvitapi.a: vendor/vitapi/Makefile
-	cd vendor/vitapi
-	make
+	cd vendor/vitapi; make
 
 vendor/vitapi/Makefile: vendor/vitapi/CMakeLists.txt
-	cd vendor/vitapi
-	cmake .
+	cd vendor/vitapi; cmake .
 
 .PHONY: clean
 
 clean:
 	rm -f $(OBJS) yarn
+	git submodule foreach git clean -xdf
