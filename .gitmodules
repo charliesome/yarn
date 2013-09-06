@@ -1,3 +1,6 @@
 [submodule "vendor/libtoml"]
 	path = vendor/libtoml
 	url = git://github.com/ajwans/libtoml.git
+[submodule "vendor/klib"]
+	path = vendor/klib
+	url = git@github.com:attractivechaos/klib.git
