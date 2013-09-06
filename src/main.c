@@ -1,8 +1,9 @@
 #include <poll.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "connection.h"
-#include "vector.h"
+#include "ui.h"
 
 static void
 usage()
@@ -16,30 +17,35 @@ handle_incoming_data(connection_t* conn)
 {
     connection_recv_data(conn);
 
-    for(size_t i = 0; i < conn->lines.len; i++) {
-        string_t* str = conn->lines.elements[i];
+    for(size_t i = 0; i < kv_size(conn->lines); i++) {
+        string_t* str = kv_A(conn->lines, i);
         printf("%s", str->buff);
         string_free(str);
     }
 
-    if(conn->lines.len) {
-        vector_clear(&conn->lines);
+    if(kv_size(conn->lines)) {
+        kv_resize(string_t*, conn->lines, 0);
     }
 }
 
 static void
 run_loop(connection_t* conn)
 {
-    struct pollfd fds[1] = {
+    struct pollfd fds[2] = {
         { .fd = conn->sock, .events = POLLIN },
+        { .fd = 0,          .events = POLLIN },
     };
+
+    struct pollfd* conn_fd = &fds[0];
+    struct pollfd* stdin_fd = &fds[1];
+    (void)stdin_fd;
 
     while(1) {
         poll(fds, sizeof(fds) / sizeof(*fds), -1);
-        if(fds[0].revents & POLLIN) {
+        if(conn_fd->revents & POLLIN) {
             handle_incoming_data(conn);
         }
-        if(fds[0].revents & (POLLERR | POLLHUP)) {
+        if(conn_fd->revents & (POLLERR | POLLHUP)) {
             fprintf(stderr, "server hung up or errored\n");
             break;
         }
@@ -55,7 +61,11 @@ start_client(const char* host, int port)
         exit(EXIT_FAILURE);
     }
 
+    ui_t* ui = new_ui();
+
     run_loop(conn);
+
+    free_ui(ui);
 
     free_connection(conn);
 }

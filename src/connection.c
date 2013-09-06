@@ -40,7 +40,7 @@ initialize_connection(connection_t* conn)
     conn->sock = -1;
     conn->error = NULL;
     string_init(&conn->line_buffer);
-    vector_init(&conn->lines);
+    kv_init(conn->lines);
 }
 
 connection_t*
@@ -111,7 +111,7 @@ connection_recv_data(connection_t* conn)
         string_putc(&conn->line_buffer, buff[i]);
 
         if(buff[i] == '\n') {
-            vector_push(&conn->lines, string_dup(&conn->line_buffer));
+            kv_push(string_t*, conn->lines, string_dup(&conn->line_buffer));
             string_clear(&conn->line_buffer);
         }
     }

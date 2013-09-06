@@ -2,7 +2,7 @@
 #define CONNECTION_H
 
 #include "string.h"
-#include "vector.h"
+#include "kvec.h"
 
 typedef struct {
     const char* error;
@@ -10,7 +10,7 @@ typedef struct {
     int sock;
 
     string_t line_buffer;
-    vector_t lines;
+    kvec_t(string_t*) lines;
 }
 connection_t;
 

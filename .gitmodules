@@ -4,3 +4,6 @@
 [submodule "vendor/klib"]
 	path = vendor/klib
 	url = git@github.com:attractivechaos/klib.git
+[submodule "vendor/vitapi"]
+	path = vendor/vitapi
+	url = git://tasktools.org/vitapi.git
